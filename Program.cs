@@ -1,4 +1,7 @@
+using katlog_backend.Data;
+using katlog_backend.Middleware;
 using KatlogAPI.Middleware;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -14,6 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<KatlogDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration
+            .GetConnectionString("DefaultConnection")
+    )
+);
 
 
 var app = builder.Build();

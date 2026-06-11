@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace KatlogAPI.Middleware;
+namespace katlog_backend.Middleware;
 
 public class RequestLoggingMiddleware
 {

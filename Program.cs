@@ -1,3 +1,4 @@
+using KatlogAPI.Middleware;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -24,6 +25,8 @@ if (enabledApiDocumentation)
     app.MapScalarApiReference();
 }
 
+app.UseErrorHandlingMiddleware();
+app.UseRequestLoggingMiddleware();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

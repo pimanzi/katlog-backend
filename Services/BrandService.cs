@@ -31,12 +31,11 @@ public class BrandService : IBrandService
         if (brand is null)
             throw new NotFoundException($"Brand {id} not found");
 
-        return new BrandResponseDto(b.Id, b.Name);
+        return new BrandResponseDto(brand.Id, brand.Name);
     }
 
     public async Task<BrandResponseDto> CreateAsync(CreateBrandDto dto)
     {
-        // check duplicate name
         bool nameExists = await _repository.NameExistsAsync(dto.Name);
 
         if (nameExists)
@@ -53,12 +52,10 @@ public class BrandService : IBrandService
 
     public async Task<BrandResponseDto> UpdateAsync(int id, UpdateBrandDto dto)
     {
-        // check exists
         bool exists = await _repository.ExistsAsync(id);
         if (!exists)
             throw new NotFoundException($"Brand {id} not found");
-
-        // check duplicate name
+        
         if (dto.Name is not null)
         {
             bool nameExists = await _repository.NameExistsAsync(dto.Name);

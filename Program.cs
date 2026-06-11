@@ -1,4 +1,5 @@
 using katlog_backend.Data;
+using katlog_backend.Extensions;
 using katlog_backend.Middleware;
 using KatlogAPI.Middleware;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ builder.Services.AddDbContext<KatlogDbContext>(options =>
             .GetConnectionString("DefaultConnection")
     )
 );
+builder.Services.AddRepositories();
+builder.Services.AddServices();
 
 
 var app = builder.Build();

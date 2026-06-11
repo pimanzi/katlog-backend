@@ -3,6 +3,7 @@ using katlog_backend.DTOs;
 using katlog_backend.Exceptions;
 using katlog_backend.Models;
 using katlog_backend.Repositories;
+using katlog_backend.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace katlog_backend.Repositories;

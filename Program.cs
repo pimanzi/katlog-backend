@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using katlog_backend.Data;
 using katlog_backend.Extensions;
 using katlog_backend.Middleware;
@@ -19,6 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<KatlogDbContext>(options =>
     options.UseNpgsql(

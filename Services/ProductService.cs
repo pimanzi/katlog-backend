@@ -44,7 +44,7 @@ public class ProductService : IProductService
             .ProductCodeExistsAsync(dto.ProductCode);
 
         if (codeExists)
-            throw new BadRequestException(
+            throw new ConflictException(
                 $"Product code '{dto.ProductCode}' already exists");
         
         bool brandExists = await _brandRepository.ExistsAsync(dto.BrandId);

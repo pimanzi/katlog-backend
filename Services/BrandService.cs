@@ -60,7 +60,7 @@ public class BrandService : IBrandService
         {
             bool nameExists = await _repository.NameExistsAsync(dto.Name);
             if (nameExists)
-                throw new BadRequestException($"Brand '{dto.Name}' already exists");
+                throw new ConflictException($"Brand '{dto.Name}' already exists");
         }
 
         var updated = await _repository.UpdateAsync(id, dto);

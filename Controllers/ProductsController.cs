@@ -1,5 +1,6 @@
 using katlog_backend.DTOs;
 using katlog_backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace katlog_backend.Controllers;
@@ -15,13 +16,14 @@ public class ProductsController : ControllerBase
         _service = service;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<ProductResponseDto>>> GetAll()
     {
         var products = await _service.GetAllAsync();
         return Ok(products);
     }
-
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProductDetailResponseDto>> GetById(
         int id)
@@ -29,7 +31,7 @@ public class ProductsController : ControllerBase
         var product = await _service.GetByIdAsync(id);
         return Ok(product);
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<ProductResponseDto>> Create(
         CreateProductDto dto)
@@ -41,7 +43,7 @@ public class ProductsController : ControllerBase
             product
         );
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<ProductResponseDto>> Update(
         int id,
@@ -50,7 +52,7 @@ public class ProductsController : ControllerBase
         var product = await _service.UpdateAsync(id, dto);
         return Ok(product);
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

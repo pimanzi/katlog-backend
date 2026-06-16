@@ -3,7 +3,8 @@ namespace katlog_backend.Enums;
 public enum ProductStatus
 {
     Draft,
-    Review,
+    InReview,        
+    ReadyToPublish, 
     Published,
     Archived
 }

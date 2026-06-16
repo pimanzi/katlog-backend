@@ -61,7 +61,6 @@ public class ProductService : IProductService
             Name = dto.Name,
             ProductCode = dto.ProductCode,
             Description = dto.Description,
-            Status = dto.Status,
             Season = dto.Season,
             TargetMarket = dto.TargetMarket,
             BrandId = dto.BrandId,

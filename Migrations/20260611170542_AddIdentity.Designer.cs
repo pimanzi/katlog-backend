@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using katlog_backend.Data;
@@ -11,9 +12,11 @@ using katlog_backend.Data;
 namespace katlog_backend.Migrations
 {
     [DbContext(typeof(KatlogDbContext))]
-    partial class KatlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260611170542_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,7 +329,7 @@ namespace katlog_backend.Migrations
                         {
                             t.HasCheckConstraint("CK_Products_Season", "\"Season\" IN ('Spring','Summer','Autumn','Winter')");
 
-                            t.HasCheckConstraint("CK_Products_Status", "\"Status\" IN ('Draft','InReview','ReadyToPublish', 'Published','Archived')");
+                            t.HasCheckConstraint("CK_Products_Status", "\"Status\" IN ('Draft','Review','Published','Archived')");
                         });
                 });
 

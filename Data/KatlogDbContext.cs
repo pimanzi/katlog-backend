@@ -1,9 +1,11 @@
 using katlog_backend.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace katlog_backend.Data;
 
-public class KatlogDbContext : DbContext
+public class KatlogDbContext : IdentityDbContext<AppUser>
 {
     public KatlogDbContext(
         DbContextOptions<KatlogDbContext> options)
@@ -17,7 +19,12 @@ public class KatlogDbContext : DbContext
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
-    {
+    {   
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Ignore<IdentityUserPasskey<string>>();
+        modelBuilder.Ignore<IdentityPasskeyData>();
+
+       
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(KatlogDbContext).Assembly
         );

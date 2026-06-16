@@ -8,7 +8,7 @@ public class Product
     public required string Name { get; set; }
     public required string ProductCode { get; set; }
     public required string Description { get; set; }
-    public ProductStatus Status { get; set; }
+    public ProductStatus Status { get; set; } = ProductStatus.Draft;
     public Season Season { get; set; }
     public string[] TargetMarket { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

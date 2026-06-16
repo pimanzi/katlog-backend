@@ -49,10 +49,7 @@ public class CreateProductDto
     [Required]
     [MaxLength(1000)]
     public required string Description { get; set; }
-
-    [Required]
-    public ProductStatus Status { get; set; }
-
+    
     [Required]
     public Season Season { get; set; }
 

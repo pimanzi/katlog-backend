@@ -1,5 +1,6 @@
 using katlog_backend.DTOs;
 using katlog_backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace katlog_backend.Controllers;
@@ -14,7 +15,7 @@ public class BrandsController : ControllerBase
     {
         _service = service;
     }
-
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<BrandResponseDto>>> GetAll()
        
@@ -23,6 +24,7 @@ public class BrandsController : ControllerBase
         return Ok(brands);
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<BrandResponseDto>> GetById(int id)
     {
@@ -30,6 +32,7 @@ public class BrandsController : ControllerBase
         return Ok(brand);
     }
 
+    [Authorize (Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<BrandResponseDto>> Create(
         CreateBrandDto dto)
@@ -41,7 +44,7 @@ public class BrandsController : ControllerBase
             brand
         );
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpPatch("{id:int}")]
     public async Task<ActionResult<BrandResponseDto>> Update(
       
@@ -51,7 +54,7 @@ public class BrandsController : ControllerBase
         var brand = await _service.UpdateAsync(id, dto);
         return Ok(brand);
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

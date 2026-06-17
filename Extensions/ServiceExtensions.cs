@@ -13,12 +13,15 @@ public static class ServiceExtensions
         services.AddScoped<IBrandRepository, BrandRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IVariantRepository, VariantRepository>();
         return services;
     }
 
     public static IServiceCollection AddServices(
         this IServiceCollection services)
     {
+       
+        services.AddScoped<IVariantService, VariantService>();
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();

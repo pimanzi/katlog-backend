@@ -18,6 +18,8 @@ public class Product
     public int CategoryId { get; set; }
     public Brand Brand { get; set; } = null!;
     public Category Category { get; set; } = null!;
+    
+    public List<Variant> Variants { get; set; } = new();
 
 }
 

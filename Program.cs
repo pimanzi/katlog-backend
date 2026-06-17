@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CloudinaryDotNet;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using katlog_backend.Data;
@@ -49,9 +50,21 @@ builder.Services.AddDbContext<KatlogDbContext>(options =>
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var encodedKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 builder.Services.Configure<JwtSettings>(jwtSettings);
+var cloudinarySettings = builder.Configuration
+    .GetSection("CloudinarySettings")!
+    .Get<CloudinarySettings>();
+var cloudinaryAccount = new Account(
+    cloudinarySettings.CloudName,
+    cloudinarySettings.ApiKey,
+    cloudinarySettings.ApiSecret
+);
+
+var cloudinary = new Cloudinary(cloudinaryAccount);
+builder.Services.AddSingleton(cloudinaryAccount);
 builder.Services
     .AddIdentityCore<AppUser>(options=>
     {   options.Password.RequireDigit = true; 

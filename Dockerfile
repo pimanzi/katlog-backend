@@ -15,4 +15,4 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 EXPOSE 5235
-ENTRYPOINT ["dotnet", "katlog_backend.dll"]
+ENTRYPOINT ["dotnet", "katlog-backend.dll"]

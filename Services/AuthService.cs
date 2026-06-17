@@ -41,7 +41,7 @@ public class AuthService: IAuthService
             throw new BadRequestException(error);
         }
         
-        await _userManager.AddToRoleAsync(user, "User");
+        await _userManager.AddToRoleAsync(user, "Admin");
 
     
         var roles = await _userManager.GetRolesAsync(user);

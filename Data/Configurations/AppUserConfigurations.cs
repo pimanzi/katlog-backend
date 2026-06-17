@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace katlog_backend.Data.Configurations;
 
-public class AppUserConfiguration
+public class AppUserConfigurations
     : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)

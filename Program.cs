@@ -64,7 +64,7 @@ var cloudinaryAccount = new Account(
 );
 
 var cloudinary = new Cloudinary(cloudinaryAccount);
-builder.Services.AddSingleton(cloudinaryAccount);
+builder.Services.AddSingleton(cloudinary);
 builder.Services
     .AddIdentityCore<AppUser>(options=>
     {   options.Password.RequireDigit = true; 

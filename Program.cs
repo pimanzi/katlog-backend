@@ -12,6 +12,7 @@ using katlog_backend.Services.Interfaces;
 using katlog_backend.Settings;
 using KatlogAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,7 +31,7 @@ var port = Environment.GetEnvironmentVariable("PORT");
 
 if (!string.IsNullOrEmpty(port))
 {
-    builder.WebHost.UseUrls($"https://0.0.0.0:{port}");
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 
 builder.Host.UseSerilog();
@@ -168,6 +169,11 @@ if (enabledApiDocumentation)
     app.MapScalarApiReference();
 }
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | 
+                       ForwardedHeaders.XForwardedProto
+});
 app.UseErrorHandlingMiddleware();
 app.UseRequestLoggingMiddleware();
 app.UseHttpsRedirection();

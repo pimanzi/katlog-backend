@@ -121,6 +121,8 @@ var app = builder.Build();
 
 // seeding roles
 using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<KatlogDbContext>();
+await dbContext.Database.MigrateAsync();
 var roleManager = scope.ServiceProvider
     .GetRequiredService<RoleManager<IdentityRole>>();
 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser> >();

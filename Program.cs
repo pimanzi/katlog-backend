@@ -1,3 +1,11 @@
+using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using katlog_backend.Data;
+using katlog_backend.Extensions;
+using katlog_backend.Middleware;
+using KatlogAPI.Middleware;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -11,8 +19,19 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<KatlogDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration
+            .GetConnectionString("DefaultConnection")
+    )
+);
+builder.Services.AddRepositories();
+builder.Services.AddServices();
 
 
 var app = builder.Build();
@@ -24,6 +43,8 @@ if (enabledApiDocumentation)
     app.MapScalarApiReference();
 }
 
+app.UseErrorHandlingMiddleware();
+app.UseRequestLoggingMiddleware();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

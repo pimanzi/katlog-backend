@@ -14,6 +14,7 @@ public static class ServiceExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IVariantRepository, VariantRepository>();
+        services.AddScoped<IAssetRepository, AssetRepository>();
         return services;
     }
 
@@ -21,6 +22,7 @@ public static class ServiceExtensions
         this IServiceCollection services)
     {
        
+        services.AddScoped<IAssetService, AssetService>();
         services.AddScoped<IVariantService, VariantService>();
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<ICategoryService, CategoryService>();

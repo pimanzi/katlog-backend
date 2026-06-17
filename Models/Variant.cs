@@ -18,4 +18,5 @@ public class Variant
     
     public int ProductId { get; set; }
     public Product Product { get; set; } = null!;
+    public List<Asset> Assets { get; set; } = new();
 }

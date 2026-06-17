@@ -14,8 +14,16 @@ public class KatlogDbContext : IdentityDbContext<AppUser>
     }
 
     public DbSet<Brand> Brands { get; set; }
+    
+    public DbSet <Asset> Assets { get; set; }
+    
+    public DbSet <Tag> Tags { get; set; }
+    
+    public DbSet <AssetTag> AssetTags { get; set; }
     public DbSet <Variant> Variants { get; set; }
     public DbSet<Category> Categories { get; set; }
+    
+    public DbSet<AssetStatusHistory> AssetStatusHistories { get; set; }
     public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(

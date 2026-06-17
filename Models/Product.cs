@@ -20,6 +20,7 @@ public class Product
     public Category Category { get; set; } = null!;
     
     public List<Variant> Variants { get; set; } = new();
+    public List<Asset> Assets { get; set; } = new();
 
 }
 

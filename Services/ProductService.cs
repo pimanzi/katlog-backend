@@ -22,10 +22,21 @@ public class ProductService : IProductService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<List<ProductResponseDto>> GetAllAsync()
+    public async Task<PagedResultDto<ProductResponseDto>> GetAllAsync(ProductQueryParameters queryParameters)
     {
-        var products = await _repository.GetAllAsync();
-        return products.Select(MapToResponseDto).ToList();
+        var (items, totalCount) = await _repository.GetAllAsync(queryParameters);
+        var dtos = items.Select(MapToResponseDto).ToList();
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)queryParameters.PageSize);
+
+        return new PagedResultDto<ProductResponseDto>(
+            dtos,
+            totalCount,
+            queryParameters.PageNumber,
+            queryParameters.PageSize,
+            totalPages
+        );
+         
     }
 
     public async Task<ProductDetailResponseDto> GetByIdAsync(int id)
@@ -137,6 +148,44 @@ public class ProductService : IProductService
         );
     }
 
+    private static VariantResponseDto MapToVariantResponseDtoo(Variant v)
+    {
+        return new VariantResponseDto(
+            v.Id,
+            v.Name,
+            v.VariantCode,
+            v.Colour,
+            v.Size,
+            v.Material,
+            v.Barcode,
+            v.Status.ToString(),
+            v.ProductId,
+            v.CreatedAt,
+            v.UpdatedAt
+        );
+    }
+    
+    private static AssetResponseDto MapToAssetResponseDto(Asset a)
+    {
+        return new AssetResponseDto(
+            a.Id,
+            a.OriginalFileName,
+            a.FileName,
+            a.ContentType,
+            a.FileSize,
+            a.FileUrl,
+            a.AssetType.ToString(),
+            a.Status.ToString(),
+            a.Title,
+            a.Description,
+            a.AssetTags.Select(at => at.Tag.Name).ToList(),
+            a.UploadedBy,
+            a.UploadedAt,
+            a.ProductId,
+            a.VariantId
+        );
+    }
+
     private static ProductDetailResponseDto MapToDetailDto(Product p)
     {
         return new ProductDetailResponseDto(
@@ -152,7 +201,9 @@ public class ProductService : IProductService
             p.CategoryId,
             p.Category.Name,
             p.CreatedAt,
-            p.UpdatedAt
+            p.UpdatedAt,
+            p.Variants.Select(MapToVariantResponseDtoo).ToList(),
+            p.Assets.Select(MapToAssetResponseDto).ToList()
         );
     }
 }

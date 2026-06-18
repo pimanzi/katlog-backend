@@ -82,9 +82,13 @@ public class AssetRepository : IAssetRepository
 
     public async Task<Asset> UpdateStatusAsync(Asset asset)
     {
-        _context.Assets.Update(asset);
+        var existingAsset = await _context.Assets
+            .FirstOrDefaultAsync(a => a.Id == asset.Id);
+
+        existingAsset!.Status = asset.Status;
+
         await _context.SaveChangesAsync();
-        return asset;
+        return existingAsset;
     }
 
     public async Task<bool> ExistsAsync(int id)

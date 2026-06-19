@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/katlog-backend/katlog-backend.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/katlog-backend.Tests/katlog-backend.Tests.csproj" />
+  </Folder>
+</Solution>

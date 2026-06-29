@@ -1,6 +1,0 @@
-@katlog_backend_HostAddress = http://localhost:5235
-
-GET {{katlog_backend_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

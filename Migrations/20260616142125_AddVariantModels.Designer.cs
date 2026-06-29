@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using katlog_backend.Data;
@@ -11,9 +12,11 @@ using katlog_backend.Data;
 namespace katlog_backend.Migrations
 {
     [DbContext(typeof(KatlogDbContext))]
-    partial class KatlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616142125_AddVariantModels")]
+    partial class AddVariantModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,141 +221,6 @@ namespace katlog_backend.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("katlog_backend.Models.Asset", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AssetType")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UploadedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("VariantId");
-
-                    b.ToTable("Assets", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Assets_AssetType", "\"AssetType\" IN ('MainImage','VariantImage','LifestyleImage','MarketingBanner','SizeGuide','TechnicalDocument')");
-
-                            t.HasCheckConstraint("CK_Assets_Status", "\"Status\" IN ('Uploaded','PendingReview','Approved','Rejected','Archived')");
-                        });
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.AssetStatusHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ChangedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("NewStatus")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("PreviousStatus")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssetId");
-
-                    b.ToTable("AssetStatusHistories", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_AssetStatusHistories_NewStatus", "\"NewStatus\" IN ('Uploaded','PendingReview','Approved','Rejected','Archived')");
-
-                            t.HasCheckConstraint("CK_AssetStatusHistories_PreviousStatus", "\"PreviousStatus\" IN ('Uploaded','PendingReview','Approved','Rejected','Archived')");
-                        });
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.AssetTag", b =>
-                {
-                    b.Property<int>("AssetId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("AssetId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("AssetTags", (string)null);
-                });
-
             modelBuilder.Entity("katlog_backend.Models.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -463,27 +331,6 @@ namespace katlog_backend.Migrations
 
                             t.HasCheckConstraint("CK_Products_Status", "\"Status\" IN ('Draft','InReview','ReadyToPublish', 'Published','Archived')");
                         });
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("katlog_backend.Models.Variant", b =>
@@ -603,54 +450,6 @@ namespace katlog_backend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("katlog_backend.Models.Asset", b =>
-                {
-                    b.HasOne("katlog_backend.Models.Product", "Product")
-                        .WithMany("Assets")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("katlog_backend.Models.Variant", "Variant")
-                        .WithMany("Assets")
-                        .HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Variant");
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.AssetStatusHistory", b =>
-                {
-                    b.HasOne("katlog_backend.Models.Asset", "Asset")
-                        .WithMany("StatusHistory")
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.AssetTag", b =>
-                {
-                    b.HasOne("katlog_backend.Models.Asset", "Asset")
-                        .WithMany("AssetTags")
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("katlog_backend.Models.Tag", "Tag")
-                        .WithMany("AssetTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("katlog_backend.Models.Product", b =>
                 {
                     b.HasOne("katlog_backend.Models.Brand", "Brand")
@@ -681,13 +480,6 @@ namespace katlog_backend.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("katlog_backend.Models.Asset", b =>
-                {
-                    b.Navigation("AssetTags");
-
-                    b.Navigation("StatusHistory");
-                });
-
             modelBuilder.Entity("katlog_backend.Models.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -700,19 +492,7 @@ namespace katlog_backend.Migrations
 
             modelBuilder.Entity("katlog_backend.Models.Product", b =>
                 {
-                    b.Navigation("Assets");
-
                     b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.Tag", b =>
-                {
-                    b.Navigation("AssetTags");
-                });
-
-            modelBuilder.Entity("katlog_backend.Models.Variant", b =>
-                {
-                    b.Navigation("Assets");
                 });
 #pragma warning restore 612, 618
         }

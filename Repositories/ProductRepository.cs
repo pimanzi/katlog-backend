@@ -16,13 +16,38 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public async Task<List<Product>> GetAllAsync()
+    public async Task<(List<Product>,int  TotalCount)> GetAllAsync(ProductQueryParameters queryParameters)
     {
-        return await _context.Products
+        var productsQuery = _context.Products
             .AsNoTracking()
             .Include(p => p.Brand)
             .Include(p => p.Category)
+            .Include(p=> p.Variants)
+            .Include(p=> p.Assets). AsQueryable();
+        
+        if (!String.IsNullOrEmpty(queryParameters.Brand))
+        {
+            productsQuery = productsQuery.Where(p => p.Brand.Name == queryParameters.Brand);
+        } 
+        if (!String.IsNullOrEmpty(queryParameters.Category))
+        {
+            productsQuery = productsQuery.Where(p => p.Category.Name == queryParameters.Brand);
+        } 
+        
+        if (!String.IsNullOrEmpty(queryParameters.Status))
+        {
+            productsQuery = productsQuery.Where(p => p.Status.ToString() == queryParameters.Brand);
+        } 
+        
+        var items = await productsQuery
+            .OrderByDescending(a => a.CreatedAt)
+            .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
+            .Take(queryParameters.PageSize)
             .ToListAsync();
+        
+        var totalCount = await productsQuery.CountAsync();
+        
+        return (items, totalCount);
     }
 
     public async Task<Product?> GetByIdAsync(int id)
@@ -36,6 +61,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> CreateAsync(Product product)
     {
+        
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
         

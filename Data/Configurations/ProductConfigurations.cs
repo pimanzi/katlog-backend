@@ -13,7 +13,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         {
             t.HasCheckConstraint(
                 "CK_Products_Status",
-                "\"Status\" IN ('Draft','Review','Published','Archived')"
+                "\"Status\" IN ('Draft','InReview','ReadyToPublish', 'Published','Archived')"
             );
             t.HasCheckConstraint(
                 "CK_Products_Season",

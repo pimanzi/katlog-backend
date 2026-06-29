@@ -26,10 +26,6 @@ public class CreateProductValidator : AbstractValidator<CreateProductDto>
             .MaximumLength(1000)
             .WithMessage("Description cannot exceed 1000 characters");
 
-        RuleFor(x => x.Status)
-            .IsInEnum()
-            .WithMessage("Invalid product status");
-
         RuleFor(x => x.Season)
             .IsInEnum()
             .WithMessage("Invalid season");

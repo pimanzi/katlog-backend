@@ -32,8 +32,10 @@ public record ProductDetailResponseDto(
     int CategoryId,
     string CategoryName,
     DateTime CreatedAt,
-    DateTime UpdatedAt
-    // variants and assets will be added later 
+    DateTime UpdatedAt,
+    List <VariantResponseDto> Variants,
+    List <AssetResponseDto> Assets
+    
 );
 
 public class CreateProductDto
@@ -49,10 +51,7 @@ public class CreateProductDto
     [Required]
     [MaxLength(1000)]
     public required string Description { get; set; }
-
-    [Required]
-    public ProductStatus Status { get; set; }
-
+    
     [Required]
     public Season Season { get; set; }
 

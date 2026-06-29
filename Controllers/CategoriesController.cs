@@ -1,5 +1,6 @@
 using katlog_backend.DTOs;
 using katlog_backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace katlog_backend.Controllers;
@@ -14,21 +15,21 @@ public class CategoriesController : ControllerBase
     {
         _service = service;
     }
-
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<CategoryResponseDto>>> GetAll()
     {
         var categories = await _service.GetAllAsync();
         return Ok(categories);
     }
-
+    [Authorize]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CategoryResponseDto>> GetById(int id)
     {
         var category = await _service.GetByIdAsync(id);
         return Ok(category);
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<CategoryResponseDto>> Create(
         CreateCategoryDto dto)
@@ -40,7 +41,7 @@ public class CategoriesController : ControllerBase
             category
         );
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<CategoryResponseDto>> Update(
         int id,
@@ -49,7 +50,7 @@ public class CategoriesController : ControllerBase
         var category = await _service.UpdateAsync(id, dto);
         return Ok(category);
     }
-
+    [Authorize (Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

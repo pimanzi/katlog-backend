@@ -2,15 +2,19 @@ namespace katlog_backend.Enums;
 
 public enum AssetType
 {
-    Image,
-    Video,
-    Document,
-    ThreeD
+    MainImage,
+    VariantImage,
+    LifestyleImage,
+    MarketingBanner,
+    SizeGuide,
+    TechnicalDocument
 }
 
 public enum AssetStatus
 {
+    Uploaded,
     PendingReview,
     Approved,
-    Rejected
+    Rejected,
+    Archived
 }

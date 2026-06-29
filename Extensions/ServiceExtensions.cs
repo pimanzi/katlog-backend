@@ -13,15 +13,21 @@ public static class ServiceExtensions
         services.AddScoped<IBrandRepository, BrandRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IVariantRepository, VariantRepository>();
+        services.AddScoped<IAssetRepository, AssetRepository>();
         return services;
     }
 
     public static IServiceCollection AddServices(
         this IServiceCollection services)
     {
+       
+        services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IVariantService, VariantService>();
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }

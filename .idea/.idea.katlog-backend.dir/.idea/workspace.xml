@@ -16,98 +16,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4bcdb7c7-06d3-4104-b956-f8073dd4899a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/AssetController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/AuthController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/BrandsController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/CategoriesController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/ProductsController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/VariantController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/AssetDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/AssetQueryParamaters.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/AssetStatusHistory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/AuthDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/BrandDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/CategoryDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/PageResultDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/ProductDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/ProductQueryParameters.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/VariantDtos.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/AppUserConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/AssetConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/AssetStatusConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/AssetTagConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/BrandConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/CategoryConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/ProductConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/TagConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Configurations/VariantConfigurations.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/KatlogDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Enums/AssetEnums.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Enums/ProductEnums.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Enums/VariantEnums.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Exceptions/BadRequestException.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Exceptions/ConflictException.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Exceptions/NotFoundException.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Extensions/ServiceExtensions.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middleware/ErrorHandlingMiddleware.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middleware/RequestLoggingMiddleware.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260611051722_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260611051722_InitialCreate.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260611170542_AddIdentity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260611170542_AddIdentity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260616124854_UpdateProductStatusEnum.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260616124854_UpdateProductStatusEnum.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260616142125_AddVariantModels.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260616142125_AddVariantModels.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260617152144_AddAssetModels.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/20260617152144_AddAssetModels.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Migrations/KatlogDbContextModelSnapshot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/AppUser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Asset.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/AssetStatusHistory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/AssetTag.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Brand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Category.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Product.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Tag.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Variant.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Properties/launchSettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/AssetRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/BrandRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/CategoryRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/Interfaces/IAssetRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/Interfaces/IBrandRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/Interfaces/ICategoryRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/Interfaces/IProductRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/Interfaces/IVariantRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/ProductRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repositories/VariantRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/AssetService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/AuthService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BrandService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/CategoryService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/IAssetService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/IAuthService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/IBrandService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/ICategoryService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/IProductService..cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/ITokenService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Interfaces/IVariantService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/ProductService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TokenService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/VariantService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Settings/CloudinarySettings.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Settings/JwtSettings.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validators/BrandValidators.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validators/CategoryValidators.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validators/ProductValidators.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/appsettings.Production.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/appsettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/katlog-backend.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/katlog-backend.http" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.katlog-backend.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.katlog-backend.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Katlog.Api/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -286,7 +196,7 @@
       <workItem from="1781539231563" duration="21484000" />
       <workItem from="1781622653737" duration="36711000" />
       <workItem from="1781767605987" duration="33007000" />
-      <workItem from="1782723510985" duration="2873000" />
+      <workItem from="1782723510985" duration="4207000" />
     </task>
     <servers />
   </component>

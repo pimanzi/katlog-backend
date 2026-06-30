@@ -1,4 +1,5 @@
 using Katlog.Api.DTOs;
+using Katlog.Api.Enums;
 using Katlog.Api.Exceptions;
 using Katlog.Api.Models;
 using Katlog.Api.Repositories.Interfaces;
@@ -11,15 +12,18 @@ public class ProductService : IProductService
     private readonly IProductRepository _repository;
     private readonly IBrandRepository _brandRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IReadinessService _readinessService;
 
     public ProductService(
         IProductRepository repository,
         IBrandRepository brandRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        IReadinessService readinessService )
     {
         _repository = repository;
         _brandRepository = brandRepository;
         _categoryRepository = categoryRepository;
+        _readinessService = readinessService;
     }
 
     public async Task<PagedResultDto<ProductResponseDto>> GetAllAsync(ProductQueryParameters queryParameters)
@@ -41,12 +45,62 @@ public class ProductService : IProductService
 
     public async Task<ProductDetailResponseDto> GetByIdAsync(int id)
     {
-        var product = await _repository.GetByIdAsync(id);
+        return await GetByIdWithDetailsAsync(id);
+    }
+    
+    public async Task<ProductDetailResponseDto> GetByIdWithDetailsAsync(int id)
+    {
+        var product = await _repository
+            .GetByIdWithDetailsAsync(id);
 
         if (product is null)
-            throw new NotFoundException($"Product {id} not found");
+            throw new NotFoundException(
+                $"Product {id} not found");
 
-        return MapToDetailDto(product);
+        var readiness = _readinessService.Check(product);
+
+        var productAssets = product.Assets
+            .Where(a => a.VariantId is null)
+            .Select(MapToAssetResponseDto)
+            .ToList();
+
+        var variantAssets = product.Assets
+            .Where(a => a.VariantId is not null)
+            .Select(MapToAssetResponseDto)
+            .ToList();
+
+        var variants = product.Variants
+            .Select(v => new VariantResponseDto(
+                v.Id,
+                v.Name,
+                v.VariantCode,
+                v.Colour,
+                v.Size,
+                v.Material,
+                v.Barcode,
+                v.Status.ToString(),
+                v.ProductId,
+                v.CreatedAt,
+                v.UpdatedAt))
+            .ToList();
+
+        return new ProductDetailResponseDto(
+            product.Id,
+            product.Name,
+            product.ProductCode,
+            product.Description,
+            product.Status.ToString(),
+            product.Season.ToString(),
+            product.TargetMarket,
+            product.Brand.Name,
+            product.Category.Name,
+            product.CreatedAt,
+            product.UpdatedAt,
+            variants,
+            productAssets,
+            variantAssets,
+            readiness
+        );
     }
 
     public async Task<ProductResponseDto> CreateAsync(CreateProductDto dto)
@@ -129,6 +183,112 @@ public class ProductService : IProductService
         await _repository.DeleteAsync(product);
     }
     
+    public async Task<ProductResponseDto> SubmitForReviewAsync(int id)
+    {
+        var product = await _repository
+            .GetByIdWithDetailsAsync(id);
+
+        if (product is null)
+            throw new NotFoundException(
+                $"Product {id} not found");
+
+        if (product.Status != ProductStatus.Draft)
+            throw new ConflictException(
+                $"Only Draft products can be " +
+                $"submitted for review. Current " +
+                $"status: {product.Status}");
+        
+        var errors = new List<string>();
+
+        if (string.IsNullOrEmpty(product.Name))
+            errors.Add("Product name is required");
+
+        if (string.IsNullOrEmpty(product.Description))
+            errors.Add("Product description is required");
+
+        if (string.IsNullOrEmpty(product.ProductCode))
+            errors.Add("Product code is required");
+
+        if (!product.Variants.Any())
+            errors.Add("Product must have at least one variant");
+
+        if (!product.Assets.Any())
+            errors.Add("Product must have at least one asset");
+
+        if (errors.Any())
+            throw new BadRequestException(
+                string.Join(", ", errors));
+
+        product.Status = ProductStatus.InReview;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateStatusAsync(product);
+
+        return MapToResponseDto(product);
+    }
+    
+    public async Task<ProductResponseDto> PublishAsync(int id)
+    {
+        var product = await _repository
+            .GetByIdWithDetailsAsync(id);
+
+        if (product is null)
+            throw new NotFoundException(
+                $"Product {id} not found");
+
+        if (product.Status != ProductStatus.InReview &&
+            product.Status != ProductStatus.ReadyToPublish)
+            throw new ConflictException(
+                $"Only InReview or ReadyToPublish products " +
+                $"can be published. Current status: {product.Status}");
+        
+        var readiness = _readinessService.Check(product);
+
+        if (!readiness.IsReady)
+            throw new ConflictException(
+                $"Product is not ready to publish: " +
+                string.Join(", ", readiness.FailReasons));
+
+        product.Status = ProductStatus.Published;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateStatusAsync(product);
+
+        return MapToResponseDto(product);
+    }
+    
+    public async Task<ProductResponseDto> ArchiveAsync(int id)
+    {
+        var product = await _repository
+            .GetByIdAsync(id);
+
+        if (product is null)
+            throw new NotFoundException(
+                $"Product {id} not found");
+
+        if (product.Status == ProductStatus.Archived)
+            throw new ConflictException(
+                "Product is already archived");
+
+        product.Status = ProductStatus.Archived;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateStatusAsync(product);
+
+        return MapToResponseDto(product);
+    }
+    
+    public async Task<ReadinessResponseDto> GetReadinessAsync(int id)
+    {
+        var product = await _repository
+            .GetByIdWithDetailsAsync(id);
+
+        if (product is null)
+            throw new NotFoundException(
+                $"Product {id} not found");
+
+        return _readinessService.Check(product);
+    }
     private static ProductResponseDto MapToResponseDto(Product p)
     {
         return new ProductResponseDto(
@@ -186,24 +346,4 @@ public class ProductService : IProductService
         );
     }
 
-    private static ProductDetailResponseDto MapToDetailDto(Product p)
-    {
-        return new ProductDetailResponseDto(
-            p.Id,
-            p.Name,
-            p.ProductCode,
-            p.Description,
-            p.Status.ToString(),
-            p.Season.ToString(),
-            p.TargetMarket,
-            p.BrandId,
-            p.Brand.Name,
-            p.CategoryId,
-            p.Category.Name,
-            p.CreatedAt,
-            p.UpdatedAt,
-            p.Variants.Select(MapToVariantResponseDtoo).ToList(),
-            p.Assets.Select(MapToAssetResponseDto).ToList()
-        );
-    }
 }

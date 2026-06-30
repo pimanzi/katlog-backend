@@ -1,5 +1,6 @@
 using Katlog.Api.Data;
 using Katlog.Api.DTOs;
+using Katlog.Api.Enums;
 using Katlog.Api.Models;
 using Katlog.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -128,6 +129,23 @@ public class AssetRepository : IAssetRepository
             .AsNoTracking()
             .Where(h => h.AssetId == assetId)
             .OrderByDescending(h => h.ChangedAt)
+            .ToListAsync();
+    }
+
+    public async Task<int> CountByStatusAsync(AssetStatus status)
+    {
+        return await _context.Assets
+            .CountAsync(a => a.Status == status);
+    }
+
+    public async Task<List<Asset>> GetRecentlyUploadedAsync(int count)
+    {
+        return await _context.Assets
+            .AsNoTracking()
+            .Include(a => a.AssetTags)
+                .ThenInclude(at => at.Tag)
+            .OrderByDescending(a => a.UploadedAt)
+            .Take(count)
             .ToListAsync();
     }
 }

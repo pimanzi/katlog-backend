@@ -1,5 +1,6 @@
 using Katlog.Api.Data;
 using Katlog.Api.DTOs;
+using Katlog.Api.Enums;
 using Katlog.Api.Exceptions;
 using Katlog.Api.Models;
 using Katlog.Api.Repositories.Interfaces;
@@ -59,6 +60,21 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    
+    public async Task<Product?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
+            .Include(p => p.Variants)
+            .Include(p => p.Assets)
+            .ThenInclude(a => a.AssetTags)
+            .ThenInclude(at => at.Tag)
+            .Include(p => p.Assets)
+            .ThenInclude(a => a.StatusHistory)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
     public async Task<Product> CreateAsync(Product product)
     {
         
@@ -114,6 +130,18 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
         return product;
     }
+    
+    public async Task<Product> UpdateStatusAsync(Product product)
+    {
+        var existing = await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+        existing!.Status = product.Status;
+        existing.UpdatedAt = product.UpdatedAt;
+
+        await _context.SaveChangesAsync();
+        return existing;
+    }
 
     public async Task DeleteAsync(Product product)
     {
@@ -131,5 +159,16 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products
             .AnyAsync(p => p.ProductCode.ToLower() == productCode.ToLower());
+    }
+
+    public async Task<int> CountAllAsync()
+    {
+        return await _context.Products.CountAsync();
+    }
+
+    public async Task<int> CountByStatusAsync(ProductStatus status)
+    {
+        return await _context.Products
+            .CountAsync(p => p.Status == status);
     }
 }

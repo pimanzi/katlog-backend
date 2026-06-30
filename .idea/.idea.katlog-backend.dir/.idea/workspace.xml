@@ -17,7 +17,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4bcdb7c7-06d3-4104-b956-f8073dd4899a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.katlog-backend.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.katlog-backend.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Katlog.Api/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -196,7 +195,7 @@
       <workItem from="1781539231563" duration="21484000" />
       <workItem from="1781622653737" duration="36711000" />
       <workItem from="1781767605987" duration="33007000" />
-      <workItem from="1782723510985" duration="4207000" />
+      <workItem from="1782723510985" duration="5808000" />
     </task>
     <servers />
   </component>

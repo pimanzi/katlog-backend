@@ -27,14 +27,15 @@ public record ProductDetailResponseDto(
     string Status,
     string Season,
     string[] TargetMarket,
-    int BrandId,
     string BrandName,
-    int CategoryId,
     string CategoryName,
     DateTime CreatedAt,
+    
     DateTime UpdatedAt,
-    List <VariantResponseDto> Variants,
-    List <AssetResponseDto> Assets
+    List<VariantResponseDto> Variants,
+    List<AssetResponseDto> ProductAssets,
+    List<AssetResponseDto> VariantAssets,
+    ReadinessResponseDto Readiness
     
 );
 

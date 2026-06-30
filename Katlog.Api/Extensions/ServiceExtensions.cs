@@ -28,6 +28,8 @@ public static class ServiceExtensions
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IReadinessService, ReadinessService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         return services;
     }
 }

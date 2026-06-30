@@ -1,4 +1,5 @@
 using Katlog.Api.DTOs;
+using Katlog.Api.Enums;
 using Katlog.Api.Models;
 
 namespace Katlog.Api.Repositories.Interfaces;
@@ -18,4 +19,6 @@ public interface IAssetRepository
 
     Task<AssetStatusHistory> CreateStatusHistoryAsync(AssetStatusHistory history);
     Task<List<AssetStatusHistory>> GetStatusHistoryAsync(int assetId);
+    Task<int> CountByStatusAsync(AssetStatus status);
+    Task<List<Asset>> GetRecentlyUploadedAsync(int count);
 }

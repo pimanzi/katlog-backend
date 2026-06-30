@@ -2,6 +2,7 @@ using Katlog.Api.DTOs;
 using Katlog.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Katlog.Api.Controllers;
 
@@ -63,14 +64,16 @@ public class ProductsController : ControllerBase
     [HttpPost("{id:int}/submit-for-review")]
     public async Task<ActionResult<ProductResponseDto>> SubmitForReview(int id)
     {
-        var product = await _service.SubmitForReviewAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var product = await _service.SubmitForReviewAsync(id, userId);
         return Ok(product);
     }
 
     [HttpPost("{id:int}/publish")]
     public async Task<ActionResult<ProductResponseDto>> Publish(int id)
     {
-        var product = await _service.PublishAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var product = await _service.PublishAsync(id, userId);
         return Ok(product);
     }
 

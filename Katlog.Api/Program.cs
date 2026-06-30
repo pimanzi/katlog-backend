@@ -12,6 +12,8 @@ using Katlog.Api.Services;
 using Katlog.Api.Services.Interfaces;
 using Katlog.Api.Settings;
 using Katlog.Api.Middleware;
+using Katlog.Api.Publishers;
+using Katlog.Api.Publishers.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +67,12 @@ var cloudinaryAccount = new Account(
 
 var cloudinary = new Cloudinary(cloudinaryAccount);
 builder.Services.AddSingleton(cloudinary);
+builder.Services.Configure<KafkaSettings>(
+    builder.Configuration.GetSection("Kafka"));
+
+builder.Services
+    .AddSingleton<IEventPublisher, KafkaEventPublisher>();
+
 builder.Services
     .AddIdentityCore<AppUser>(options=>
     {   options.Password.RequireDigit = true; 

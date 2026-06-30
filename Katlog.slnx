@@ -2,4 +2,5 @@
   <Folder Name="/Katlog.Api/">
     <Project Path="Katlog.Api/katlog-backend.csproj" />
   </Folder>
+  <Project Path="Katlog.Shared/Katlog.Shared.csproj" />
 </Solution>

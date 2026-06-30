@@ -4,6 +4,8 @@ WORKDIR /src
 
 # Copy csproj from Katlog.Api folder specifically
 COPY Katlog.Api/*.csproj Katlog.Api/
+COPY Katlog.Shared/*.csproj Katlog.Shared/
+
 RUN dotnet restore Katlog.Api/
 
 # Copy ALL files from root (all projects!)

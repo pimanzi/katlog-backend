@@ -84,7 +84,6 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<KatlogDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

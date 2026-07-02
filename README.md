@@ -206,13 +206,41 @@ POST /api/products
 **Body**
 
 ```json
+## Request Examples
+
+### Create Product
+```json
 {
-  "name": "Air Max",
+  "name": "Air Max 90",
   "productCode": "NK-001",
-  "description": "Running shoe",
+  "description": "Classic running shoe",
+  "season": 1,
+  "targetMarket": [0, 4],
   "brandId": 1,
   "categoryId": 1
 }
+```
+
+**season** accepted values:
+| Value | Integer |
+|---|---|
+| Spring | 0 |
+| Summer | 1 |
+| Autumn | 2 |
+| Winter | 3 |
+
+**targetMarket** accepted values (send as array of integers):
+| Value | Integer |
+|---|---|
+| Men | 0 |
+| Women | 1 |
+| Boys | 2 |
+| Girls | 3 |
+| Unisex | 4 |
+| Adults | 5 |
+| All | 6 |
+
+### Upload Asset
 ```
 
 ---

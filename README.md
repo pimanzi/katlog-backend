@@ -107,9 +107,9 @@ On startup the API will:
 - Seed Admin and User roles
 - Seed a default admin user using credentials from AdminSettings
 
-API runs at http://localhost:5062
+API runs at http://localhost:5235
 
-API documentation available at http://localhost:5062/scalar/v1
+API documentation available at [http://localhost:5235/scalar/v1](http://localhost:5235/scalar/v1)
 
 ## Starting the Consumer
 

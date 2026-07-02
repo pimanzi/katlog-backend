@@ -117,7 +117,7 @@ public class AssetService : IAssetService
             FileSize = dto.File.Length,
             FileUrl = uploadResult.SecureUrl.ToString(),
             AssetType = dto.AssetType,
-            Status = AssetStatus.Uploaded,
+            Status = AssetStatus.PendingReview,
             Title = dto.Title,
             Description = dto.Description,
             UploadedBy = uploadedByUserId,

@@ -109,7 +109,7 @@ On startup the API will:
 
 API runs at http://localhost:5235
 
-API documentation available at [http://localhost:5235/scalar/v1](http://localhost:5235/scalar/v1)
+API documentation available at [[http://localhost:5235/swagger/index.html](http://localhost:5235/swagger/index.html)]
 
 ## Starting the Consumer
 

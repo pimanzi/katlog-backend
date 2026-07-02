@@ -214,31 +214,18 @@ POST /api/products
   "name": "Air Max 90",
   "productCode": "NK-001",
   "description": "Classic running shoe",
-  "season": 1,
-  "targetMarket": [0, 4],
+  "season": "Summer",
+  "targetMarket": ["Men", "Unisex"],
   "brandId": 1,
   "categoryId": 1
 }
 ```
 
-**season** accepted values:
-| Value | Integer |
-|---|---|
-| Spring | 0 |
-| Summer | 1 |
-| Autumn | 2 |
-| Winter | 3 |
+**season** accepted values: `Spring` `Summer` `Autumn` `Winter`
 
-**targetMarket** accepted values (send as array of integers):
-| Value | Integer |
-|---|---|
-| Men | 0 |
-| Women | 1 |
-| Boys | 2 |
-| Girls | 3 |
-| Unisex | 4 |
-| Adults | 5 |
-| All | 6 |
+**targetMarket** accepted values (send as array): `Men` `Women` `Boys` `Girls` `Unisex` `Adults` `All`
+
+
 
 ### Upload Asset
 ```

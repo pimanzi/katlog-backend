@@ -240,11 +240,19 @@ POST /api/products
 POST /api/assets
 ```
 
-**Content Type**
+**Content-Type: multipart/form-data**
 
-```text
-multipart/form-data
-```
+| Field | Required | Description |
+|---|---|---|
+| file | Yes | Image file to upload |
+| productId | Yes | ID of the product |
+| assetType | Yes | Type of asset (see below) |
+| variantId | No | ID of the variant if asset belongs to one |
+| title | No | Asset title |
+| description | No | Asset description |
+| tags | No | Comma separated list of tags |
+
+**assetType** accepted values: `MainImage` `VariantImage` `LifestyleImage` `MarketingBanner` `SizeGuide` `TechnicalDocument`
 
 ## Step 6: Approve the Asset
 

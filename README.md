@@ -238,7 +238,7 @@ POST /api/products
 
 ```http
 POST /api/assets
-```
+
 
 **Content-Type: multipart/form-data**
 
@@ -254,6 +254,7 @@ POST /api/assets
 
 **assetType** accepted values: `MainImage` `VariantImage` `LifestyleImage` `MarketingBanner` `SizeGuide` `TechnicalDocument`
 
+```
 ## Step 6: Approve the Asset
 
 **Request**

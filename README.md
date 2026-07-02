@@ -107,9 +107,9 @@ On startup the API will:
 - Seed Admin and User roles
 - Seed a default admin user using credentials from AdminSettings
 
-API runs at http://localhost:5062
+API runs at http://localhost:5235
 
-API documentation available at http://localhost:5062/scalar/v1
+API documentation available at [http://localhost:5235/scalar/v1](http://localhost:5235/scalar/v1)
 
 ## Starting the Consumer
 
@@ -206,13 +206,28 @@ POST /api/products
 **Body**
 
 ```json
+## Request Examples
+
+### Create Product
+```json
 {
-  "name": "Air Max",
+  "name": "Air Max 90",
   "productCode": "NK-001",
-  "description": "Running shoe",
+  "description": "Classic running shoe",
+  "season": "Summer",
+  "targetMarket": ["Men", "Unisex"],
   "brandId": 1,
   "categoryId": 1
 }
+```
+
+**season** accepted values: `Spring` `Summer` `Autumn` `Winter`
+
+**targetMarket** accepted values (send as array): `Men` `Women` `Boys` `Girls` `Unisex` `Adults` `All`
+
+
+
+### Upload Asset
 ```
 
 ---
@@ -223,14 +238,23 @@ POST /api/products
 
 ```http
 POST /api/assets
+
+
+**Content-Type: multipart/form-data**
+
+| Field | Required | Description |
+|---|---|---|
+| file | Yes | Image file to upload |
+| productId | Yes | ID of the product |
+| assetType | Yes | Type of asset (see below) |
+| variantId | No | ID of the variant if asset belongs to one |
+| title | No | Asset title |
+| description | No | Asset description |
+| tags | No | Comma separated list of tags |
+
+**assetType** accepted values: `MainImage` `VariantImage` `LifestyleImage` `MarketingBanner` `SizeGuide` `TechnicalDocument`
+
 ```
-
-**Content Type**
-
-```text
-multipart/form-data
-```
-
 ## Step 6: Approve the Asset
 
 **Request**

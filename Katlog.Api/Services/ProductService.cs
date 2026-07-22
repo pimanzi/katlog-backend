@@ -2,8 +2,10 @@ using Katlog.Api.DTOs;
 using Katlog.Api.Enums;
 using Katlog.Api.Exceptions;
 using Katlog.Api.Models;
+using Katlog.Api.Publishers.Interfaces;
 using Katlog.Api.Repositories.Interfaces;
 using Katlog.Api.Services.Interfaces;
+using Katlog.Shared;
 
 namespace Katlog.Api.Services;
 
@@ -13,17 +15,20 @@ public class ProductService : IProductService
     private readonly IBrandRepository _brandRepository;
     private readonly ICategoryRepository _categoryRepository;
     private readonly IReadinessService _readinessService;
+    private readonly IEventPublisher _eventPublisher;
 
     public ProductService(
         IProductRepository repository,
         IBrandRepository brandRepository,
         ICategoryRepository categoryRepository,
-        IReadinessService readinessService )
+        IReadinessService readinessService,
+        IEventPublisher eventPublisher)
     {
         _repository = repository;
         _brandRepository = brandRepository;
         _categoryRepository = categoryRepository;
         _readinessService = readinessService;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<PagedResultDto<ProductResponseDto>> GetAllAsync(ProductQueryParameters queryParameters)
@@ -183,7 +188,7 @@ public class ProductService : IProductService
         await _repository.DeleteAsync(product);
     }
     
-    public async Task<ProductResponseDto> SubmitForReviewAsync(int id)
+    public async Task<ProductResponseDto> SubmitForReviewAsync(int id, string submittedBy)
     {
         var product = await _repository
             .GetByIdWithDetailsAsync(id);
@@ -223,11 +228,23 @@ public class ProductService : IProductService
         product.UpdatedAt = DateTime.UtcNow;
 
         await _repository.UpdateStatusAsync(product);
+        
+        await _eventPublisher.PublishAsync(
+            "catalogue.product-events",
+            product.Id.ToString(),
+            new ProductSubmittedForReviewEvent()
+            {
+                Payload = new ProductSubmittedForReviewPayload
+                {
+                    ProductId = product.Id,
+                    SubmittedBy = submittedBy
+                }
+            });
 
         return MapToResponseDto(product);
     }
     
-    public async Task<ProductResponseDto> PublishAsync(int id)
+    public async Task<ProductResponseDto> PublishAsync(int id, string publishedBy)
     {
         var product = await _repository
             .GetByIdWithDetailsAsync(id);
@@ -253,6 +270,18 @@ public class ProductService : IProductService
         product.UpdatedAt = DateTime.UtcNow;
 
         await _repository.UpdateStatusAsync(product);
+        
+        await _eventPublisher.PublishAsync(
+            "catalogue.product-events",
+            product.Id.ToString(),
+            new ProductPublishedEvent
+            {
+                Payload = new ProductPublishedPayload
+                {
+                    ProductId = product.Id,
+                    PublishedBy = publishedBy
+                }
+            });
 
         return MapToResponseDto(product);
     }

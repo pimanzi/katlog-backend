@@ -30,6 +30,7 @@ public static class ServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IReadinessService, ReadinessService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<ITokenService, TokenService>();
         return services;
     }
 }

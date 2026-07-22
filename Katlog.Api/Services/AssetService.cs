@@ -5,8 +5,10 @@ using Katlog.Api.DTOs;
 using Katlog.Api.Enums;
 using Katlog.Api.Exceptions;
 using Katlog.Api.Models;
+using Katlog.Api.Publishers.Interfaces;
 using Katlog.Api.Repositories.Interfaces;
 using Katlog.Api.Services.Interfaces;
+using Katlog.Shared;
 
 namespace Katlog.Api.Services;
 
@@ -17,19 +19,21 @@ public class AssetService : IAssetService
     private readonly IVariantRepository _variantRepository;
     private readonly Cloudinary _cloudinary;
     private readonly KatlogDbContext _context;
+    private readonly IEventPublisher _eventPublisher;
 
     public AssetService(
         IAssetRepository repository,
         IProductRepository productRepository,
         IVariantRepository variantRepository,
         Cloudinary cloudinary,
-        KatlogDbContext context)
+        KatlogDbContext context, IEventPublisher eventPublisher)
     {
         _repository = repository;
         _productRepository = productRepository;
         _variantRepository = variantRepository;
         _cloudinary = cloudinary;
         _context = context;
+        _eventPublisher = eventPublisher;
     }
 
     private static AssetResponseDto MapToResponseDto(Asset a)
@@ -113,7 +117,7 @@ public class AssetService : IAssetService
             FileSize = dto.File.Length,
             FileUrl = uploadResult.SecureUrl.ToString(),
             AssetType = dto.AssetType,
-            Status = AssetStatus.Uploaded,
+            Status = AssetStatus.PendingReview,
             Title = dto.Title,
             Description = dto.Description,
             UploadedBy = uploadedByUserId,
@@ -141,6 +145,22 @@ public class AssetService : IAssetService
         }
 
         var finalAsset = await _repository.GetByIdAsync(createdAsset.Id);
+        
+        await _eventPublisher.PublishAsync(
+            "catalogue.asset-events",
+            finalAsset!.ProductId.ToString(),
+            new AssetUploadedEvent()
+            {
+                Payload = new AssetUploadedPayload
+                {
+                    AssetId = finalAsset.Id,
+                    ProductId = finalAsset.ProductId,
+                    VariantId = finalAsset.VariantId,
+                    AssetType = finalAsset.AssetType.ToString(),
+                    FileName = finalAsset.FileName,
+                    UploadedBy = finalAsset.UploadedBy
+                }
+            });
         return MapToResponseDto(finalAsset!);
     }
 
@@ -179,6 +199,19 @@ public class AssetService : IAssetService
             await transaction.RollbackAsync();
             throw;
         }
+        
+        await _eventPublisher.PublishAsync(
+            "catalogue.asset-events",
+            asset.ProductId.ToString(),
+            new AssetApprovedEvent
+            {
+                Payload = new AssetApprovedPayload
+                {
+                    AssetId = asset.Id,
+                    ProductId = asset.ProductId,
+                    ApprovedBy = changedByUserId
+                }
+            });
 
         return MapToResponseDto(asset);
     }
@@ -219,6 +252,21 @@ public class AssetService : IAssetService
             await transaction.RollbackAsync();
             throw;
         }
+        
+        await _eventPublisher.PublishAsync(
+            "catalogue.asset-events",
+            asset.ProductId.ToString(),
+            new AssetRejectedEvent
+            {
+                Payload = new AssetRejectedPayload
+                {
+                    AssetId = asset.Id,
+                    ProductId = asset.ProductId,
+                    RejectionReason = dto.Reason,
+                    RejectedBy = changedByUserId
+                }
+            });
+
 
         return MapToResponseDto(asset);
     }

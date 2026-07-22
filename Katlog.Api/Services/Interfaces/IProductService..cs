@@ -8,8 +8,8 @@ public interface IProductService
     Task<ProductDetailResponseDto> GetByIdAsync(int id);
     Task<ProductResponseDto> CreateAsync(CreateProductDto dto);
     Task<ProductResponseDto> UpdateAsync(int id, UpdateProductDto dto);
-    Task<ProductResponseDto> SubmitForReviewAsync(int id);
-    Task<ProductResponseDto> PublishAsync(int id);
+    Task<ProductResponseDto> SubmitForReviewAsync(int id, string submittedBy);
+    Task<ProductResponseDto> PublishAsync(int id, string publishedBy);
     Task<ProductResponseDto> ArchiveAsync(int id);
     Task<ReadinessResponseDto> GetReadinessAsync(int id);
     Task<ProductDetailResponseDto> GetByIdWithDetailsAsync(int id);

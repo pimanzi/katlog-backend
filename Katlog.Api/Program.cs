@@ -8,16 +8,15 @@ using Katlog.Api.Data;
 using Katlog.Api.Extensions;
 using Katlog.Api.Middleware;
 using Katlog.Api.Models;
-using Katlog.Api.Services;
-using Katlog.Api.Services.Interfaces;
+using Katlog.Api.Publishers;
+using Katlog.Api.Publishers.Interfaces;
 using Katlog.Api.Settings;
-using Katlog.Api.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
+using Microsoft.OpenApi;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -36,38 +35,77 @@ if (!string.IsNullOrEmpty(port))
 }
 
 builder.Host.UseSerilog();
+
 builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters
+            .Add(new JsonStringEnumConverter()));
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Katlog API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token here"
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", document),
+            new List<string>()
+        }
+    });
+});
+
 builder.Services.AddDbContext<KatlogDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration
-            .GetConnectionString("DefaultConnection")
-    )
-);
+            .GetConnectionString("DefaultConnection")));
+
 builder.Services.AddRepositories();
 builder.Services.AddServices();
-
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var encodedKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 builder.Services.Configure<JwtSettings>(jwtSettings);
+
 var cloudinarySettings = builder.Configuration
     .GetSection("CloudinarySettings")!
     .Get<CloudinarySettings>();
+
 var cloudinaryAccount = new Account(
     cloudinarySettings.CloudName,
     cloudinarySettings.ApiKey,
-    cloudinarySettings.ApiSecret
-);
+    cloudinarySettings.ApiSecret);
 
 var cloudinary = new Cloudinary(cloudinaryAccount);
 builder.Services.AddSingleton(cloudinary);
+
+builder.Services.Configure<KafkaSettings>(
+    builder.Configuration.GetSection("Kafka"));
+
 builder.Services
-    .AddIdentityCore<AppUser>(options=>
-    {   options.Password.RequireDigit = true; 
+    .AddSingleton<IEventPublisher, KafkaEventPublisher>();
+
+builder.Services
+    .AddIdentityCore<AppUser>(options =>
+    {
+        options.Password.RequireDigit = true;
         options.Password.RequireLowercase = true;
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = false;
@@ -76,89 +114,87 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<KatlogDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }
-    ).AddJwtBearer(options =>
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(encodedKey)
+    };
+
+    options.Events = new JwtBearerEvents
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        OnChallenge = async context =>
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(encodedKey)
-        };
+            context.HandleResponse();
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
 
-        options.Events = new JwtBearerEvents
+            var result = JsonSerializer.Serialize(new
+            {
+                error = "Unauthorized",
+                message = "You must be logged in to access this resource"
+            });
+
+            await context.Response.WriteAsync(result);
+        },
+
+        OnForbidden = async context =>
         {
-            OnChallenge = async context =>
+            context.Response.StatusCode = 403;
+            context.Response.ContentType = "application/json";
+
+            var result = JsonSerializer.Serialize(new
             {
-                context.HandleResponse();
-                context.Response.StatusCode = 401;
-                context.Response.ContentType = "application/json";
+                error = "Forbidden",
+                message = "You do not have permission to access this resource"
+            });
 
-                var result = JsonSerializer.Serialize(new
-                {
-                    error = "Unauthorized",
-                    message = "You must be logged in to access this resource"
-                });
-
-                await context.Response.WriteAsync(result);
-            },
-
-            OnForbidden = async context =>
-            {
-                context.Response.StatusCode = 403;
-                context.Response.ContentType = "application/json";
-
-                var result = JsonSerializer.Serialize(new
-                {
-                    error = "Forbidden",
-                    message = "You do not have permission to access this resource"
-                });
-
-                await context.Response.WriteAsync(result);
-            }
-        };
-    }
-);
-;
-
+            await context.Response.WriteAsync(result);
+        }
+    };
+});
 
 var app = builder.Build();
 
-// seeding roles
 using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<KatlogDbContext>();
-await dbContext.Database.MigrateAsync();
+var dbContext = scope.ServiceProvider
+    .GetRequiredService<KatlogDbContext>();
+
+var pending = await dbContext.Database
+    .GetPendingMigrationsAsync();
+
+if (pending.Any())
+    await dbContext.Database.MigrateAsync();
+
 var roleManager = scope.ServiceProvider
     .GetRequiredService<RoleManager<IdentityRole>>();
-var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser> >();
+var userManager = scope.ServiceProvider
+    .GetRequiredService<UserManager<AppUser>>();
 
 if (!await roleManager.RoleExistsAsync("Admin"))
-{
     await roleManager.CreateAsync(new IdentityRole("Admin"));
-}
-if (!await roleManager.RoleExistsAsync("User"))
-{
-    await roleManager.CreateAsync(new IdentityRole("User"));
-}
 
-//seeding admin if not exist 
+if (!await roleManager.RoleExistsAsync("User"))
+    await roleManager.CreateAsync(new IdentityRole("User"));
 
 var adminEmail = app.Configuration["AdminSettings:Email"];
 var adminPassword = app.Configuration["AdminSettings:Password"];
 var adminFirstName = app.Configuration["AdminSettings:FirstName"];
 var adminLastName = app.Configuration["AdminSettings:LastName"];
 
-var existingAdmin = await userManager
-    .FindByEmailAsync(adminEmail!);
+var existingAdmin = await userManager.FindByEmailAsync(adminEmail!);
 
 if (existingAdmin is null)
 {
@@ -169,24 +205,28 @@ if (existingAdmin is null)
         FirstName = adminFirstName,
         LastName = adminLastName,
     };
-    var result= await userManager.CreateAsync(user, adminPassword!);
+
+    var result = await userManager.CreateAsync(user, adminPassword!);
+
     if (result.Succeeded)
-    {
         await userManager.AddToRoleAsync(user, "Admin");
-    }
 }
-var enabledApiDocumentation= app.Configuration.GetValue<bool>("EnableSwagger");
+
+var enabledApiDocumentation = app.Configuration
+    .GetValue<bool>("EnableSwagger");
+
 if (enabledApiDocumentation)
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | 
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                        ForwardedHeaders.XForwardedProto
 });
+
 app.UseErrorHandlingMiddleware();
 app.UseRequestLoggingMiddleware();
 app.UseHttpsRedirection();
@@ -194,7 +234,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-
-
 app.Run();
-
